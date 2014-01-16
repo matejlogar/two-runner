@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 
 from cocos.actions import Move
@@ -6,6 +8,7 @@ import cocos
 import cocos.collision_model as cm
 import pyglet
 
+from game import obstacle
 from game import player
 from game.resources import resources
 
@@ -17,6 +20,7 @@ class Game(cocos.layer.ColorLayer):
         super(Game, self).__init__(255, 255, 255, 255)
 
         self.player = player.Player()
+        self.obstacle = obstacle.Obstacle()
 
         self.collision_manager = cm.CollisionManagerBruteForce()
 
@@ -26,24 +30,14 @@ class Game(cocos.layer.ColorLayer):
 
         self.collision_manager.add(self.player)
 
-        self.obstacle = cocos.sprite.Sprite(resources.obstacle)
-        self.obstacle.position = 770, 30
-        self.obstacle.velocity = -100, 0
-        self.obstacle.speed = 50
         self.add(self.obstacle, z=1)
         self.obstacle.do(Move())
 
-        self.obstacle.cshape = cm.AARectShape(
-            self.obstacle.position,
-            self.obstacle.width/3,
-            self.obstacle.height/2
-        )
         self.collision_manager.add(self.obstacle)
 
         self.player.schedule(self.update)
 
     def update(self, dt):
-        self.obstacle.cshape.center = self.obstacle.position
         collisions = self.collision_manager.objs_colliding(self.player)
         if collisions:
             if self.obstacle in collisions:
