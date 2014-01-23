@@ -2,14 +2,14 @@
 
 from __future__ import division
 
-from cocos.actions import Move
-from pyglet.window import key
 import cocos
 import cocos.collision_model as cm
 import pyglet
 
+from game import ozadje
 from game import obstacle
 from game import player
+from game import utils
 from game.resources import resources
 
 
@@ -25,17 +25,15 @@ class Game(cocos.layer.ColorLayer):
         self.collision_manager = cm.CollisionManagerBruteForce()
 
         self.add(self.player, z=1)
-        self.player.do(Move())
-        self.player.jumping = False
-
         self.collision_manager.add(self.player)
 
         self.add(self.obstacle, z=1)
-        self.obstacle.do(Move())
-
         self.collision_manager.add(self.obstacle)
 
-        self.player.schedule(self.update)
+        self.oblacki = ozadje.Oblacki()
+        self.add(self.oblacki, z = 1)
+
+        self.schedule(self.update)
 
     def update(self, dt):
         collisions = self.collision_manager.objs_colliding(self.player)
@@ -49,34 +47,6 @@ class Game(cocos.layer.ColorLayer):
                 )
                 scene.add(BackgroundLayer(), z=0)
                 cocos.director.director.run(scene)
-
-        if self.obstacle.position[0] < 0:
-            self.obstacle.position = 830, 30
-
-    def on_key_press(self, symbol, modifiers):
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] -= self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.UP:
-            if not self.player.jumping:
-                vel[1] += self.player.speed
-                self.player.jumping = True
-        elif symbol == key.DOWN:
-            vel[1] = -self.player.speed
-
-        self.player.velocity = tuple(vel)
-
-    def on_key_release(self, symbol, modifier):
-        vel = list(self.player.velocity)
-        if symbol == key.LEFT:
-            vel[0] += self.player.speed/2
-        elif symbol == key.RIGHT:
-            vel[0] -= self.player.speed/2
-
-        self.player.velocity = vel
-
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):
@@ -147,7 +117,6 @@ class BackgroundLayer(cocos.layer.Layer):
         self.player.position = 200, 250
         self.add(self.player, z=1)
 
-
 class YouLostMenu(cocos.menu.Menu):
     def __init__(self):
         super(YouLostMenu, self).__init__("YOU LOST")
@@ -186,6 +155,7 @@ class YouLostMenu(cocos.menu.Menu):
 
 if __name__ == '__main__':
     cocos.director.director.init(width=800, height=500)
+    cocos.director.director.window.push_handlers(utils.keys)
     scene = cocos.scene.Scene()
     scene.add(cocos.layer.MultiplexLayer(MainMenu(), OptionsMenu()), z=1)
     scene.add(BackgroundLayer(), z=0)
