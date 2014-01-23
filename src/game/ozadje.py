@@ -6,19 +6,19 @@ from cocos.sprite import Sprite
 
 from game.resources import resources
 
-class Oblacki(Sprite):
+class MovingBackground(Sprite):
     def __init__(
             self,
-            position = (800, 400),
+            sprite,
             velocity = (-10, 0),
-            speed = 10,
             *args,
             **kwargs):
 
-        kwargs['position'] = position
+        if 'position' not in kwargs.keys():
+            kwargs['position'] = (800, 400)
 
-        super(Oblacki, self).__init__(resources.cloud1, *args, **kwargs)
-        self.speed = speed
+        super(MovingBackground, self).__init__(sprite, *args, **kwargs)
+
         self.velocity = velocity
 
         self.do(Move())
@@ -26,4 +26,28 @@ class Oblacki(Sprite):
 
     def update(self, dt):
         if self.position[0] < 0:
-            self.position = 810, 30
+            self.position = 810, self.position[1]
+
+
+
+
+
+class Oblacki(MovingBackground):
+    """docstring for Oblacki"""
+    def __init__(
+        self,
+        sprite = resources.cloud1,
+        velocity = (-10, 0),
+        *args,
+        **kwargs):
+
+        if 'position' not in kwargs.keys():
+            kwargs['position'] = (800, 400)
+
+        super(Oblacki, self).__init__(
+            sprite,
+            velocity = velocity,
+            *args,
+            **kwargs
+        )
+
