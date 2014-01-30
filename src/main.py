@@ -10,6 +10,8 @@ from game import ozadje
 from game import obstacle
 from game import player
 from game import utils
+from game import blocks
+
 from game.resources import resources
 
 
@@ -33,6 +35,14 @@ class Game(cocos.layer.ColorLayer):
         self.oblacki = ozadje.Oblacki()
         self.add(self.oblacki, z = 1)
 
+        self.block = blocks.Blocks(
+            resources.block,
+            position =(800, 60),
+            velocity=(-20,0)
+        )
+        self.add(self.block, z=1)
+        self.collision_manager.add(self.block)
+
         self.schedule(self.update)
 
     def update(self, dt):
@@ -47,6 +57,14 @@ class Game(cocos.layer.ColorLayer):
                 )
                 scene.add(BackgroundLayer(), z=0)
                 cocos.director.director.run(scene)
+            if self.block in collisions and self.player.position[1] > self.block.position[1] +self.block.height:
+                self.player.position = (self.player.position[0],self.block.position[1] + self.player.height/2 + self.block.height/2)
+
+                self.player.velocity = (self.player.velocity[0], 0)
+                print('in')
+            else:
+                pass
+
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):
