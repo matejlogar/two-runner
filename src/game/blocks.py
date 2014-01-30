@@ -1,12 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 
 from cocos.actions import Move
 from cocos.collision_model import AARectShape
-from cocos.director import director
 from cocos.sprite import Sprite
-from pyglet.window import key
 
-from game import utils
 from game.resources import resources
 
 class MovingBlock(Sprite):
@@ -21,7 +20,7 @@ class MovingBlock(Sprite):
             kwargs['position'] = (800, 150)
 
         super(MovingBlock, self).__init__(sprite, *args, **kwargs)
-        self.cshape = AARectShape(self.position, self.width//3, self.height//2)
+        self.cshape = AARectShape(self.position, self.width//2, self.height//2)
 
         self.velocity = velocity
 

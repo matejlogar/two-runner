@@ -24,6 +24,7 @@ class Game(cocos.layer.ColorLayer):
         self.player = player.Player()
         self.obstacle = obstacle.Obstacle()
 
+
         self.collision_manager = cm.CollisionManagerBruteForce()
 
         self.add(self.player, z=1)
@@ -46,7 +47,8 @@ class Game(cocos.layer.ColorLayer):
         self.schedule(self.update)
 
     def update(self, dt):
-        collisions = self.collision_manager.objs_colliding(self.player)
+        collisions = self.collision_manager.objs_colliding(
+            self.player)
         if collisions:
             if self.obstacle in collisions:
                 scene = cocos.scene.Scene()
@@ -57,13 +59,18 @@ class Game(cocos.layer.ColorLayer):
                 )
                 scene.add(BackgroundLayer(), z=0)
                 cocos.director.director.run(scene)
-            if self.block in collisions and self.player.position[1] > self.block.position[1] +self.block.height:
-                self.player.position = (self.player.position[0],self.block.position[1] + self.player.height/2 + self.block.height/2)
+            if self.block in collisions and self.player.position[1] >  self.block.position[1] +self.block.height and self.player.velocity[1] < 0:
+                self.player.position = (self.player.position[0],
+                self.block.position[1] + self.player.height/2 +
+                self.block.height/2)
+                self.player.on_block = True
 
                 self.player.velocity = (self.player.velocity[0], 0)
                 print('in')
-            else:
-                pass
+
+        else:
+            self.player.on_block = False
+
 
 
 class MainMenu(cocos.menu.Menu):

@@ -29,6 +29,7 @@ class Player(Sprite):
         self.speed = speed
         self.gravity = gravity
         self.velocity = velocity
+        self.on_block = False
 
         self.cshape = AARectShape(self.position, self.width//3, self.height//2)
 
@@ -50,6 +51,7 @@ class Player(Sprite):
         if self.position[1] <= ymin:
             self.position = (self.position[0], ymin)
             self.velocity = (self.velocity[0], 0)
+
             self.jumping = False
         if self.position[0] < xmin:
             self.position = (xmin, self.position[1])
@@ -57,8 +59,12 @@ class Player(Sprite):
             self.position = (xmax, self.position[1])
         else:
             pass
-
+        if self.on_block:
+            print("Blok je super")
+            self.jumping = False
         self.handle_keys()
+
+
 
     def handle_keys(self):
         #keyboard = key.KeyStateHandler()
@@ -71,7 +77,10 @@ class Player(Sprite):
             vel[0] += self.speed//2
         if utils.keys[key.UP]:
             if not self.jumping:
+                print('jump')
                 vel[1] += self.speed
                 self.jumping = True
+                self.on_block = False
+
 
         self.velocity = tuple(vel)
