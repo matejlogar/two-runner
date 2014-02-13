@@ -60,9 +60,11 @@ class Player(Sprite):
         else:
             pass
         if self.on_block:
-            print("Blok je super")
             self.jumping = False
         self.handle_keys()
+        if self.position[1] > 0 and self.on_block == False:
+
+            self.jumping = True
 
 
 
@@ -77,7 +79,6 @@ class Player(Sprite):
             vel[0] += self.speed//2
         if utils.keys[key.UP]:
             if not self.jumping:
-                print('jump')
                 vel[1] += self.speed
                 self.jumping = True
                 self.on_block = False

@@ -19,11 +19,10 @@ class Game(cocos.layer.ColorLayer):
     is_event_handler = True
 
     def __init__(self):
-        super(Game, self).__init__(255, 255, 255, 255)
+        super(Game, self).__init__(0, 0, 0, 0)
 
         self.player = player.Player()
         self.obstacle = obstacle.Obstacle()
-
 
         self.collision_manager = cm.CollisionManagerBruteForce()
 
@@ -36,15 +35,20 @@ class Game(cocos.layer.ColorLayer):
         self.oblacki = ozadje.Oblacki()
         self.add(self.oblacki, z = 1)
 
-        self.block = blocks.Blocks(
+        self.bloki = []
+        self.bloki = self.beri()
+        self.block = []
+        for i in range(len(self.bloki)):
+            self.block.append(blocks.Blocks(
             resources.block,
-            position =(800, 60),
-            velocity=(-20,0)
-        )
-        self.add(self.block, z=1)
-        self.collision_manager.add(self.block)
-
+            position =((800+int(self.bloki[i][0])), (60+int(self.bloki[i][1]))),
+            velocity=(-50,0)
+        ))
+            self.add(self.block[i], z=1)
+            self.collision_manager.add(self.block[i])
+            print(self.bloki)
         self.schedule(self.update)
+
 
     def update(self, dt):
         collisions = self.collision_manager.objs_colliding(
@@ -59,19 +63,24 @@ class Game(cocos.layer.ColorLayer):
                 )
                 scene.add(BackgroundLayer(), z=0)
                 cocos.director.director.run(scene)
-            if self.block in collisions and self.player.position[1] >  self.block.position[1] +self.block.height and self.player.velocity[1] < 0:
-                self.player.position = (self.player.position[0],
-                self.block.position[1] + self.player.height/2 +
-                self.block.height/2)
-                self.player.on_block = True
+            for i in self.block:
+                if i in collisions and self.player.position[1] >  i.position[1] + i.height and self.player.velocity[1] < 0:
+                    self.player.position = (self.player.position[0],
+                    i.position[1] + self.player.height/2 +
+                    i.height/2)
+                    self.player.on_block = True
 
-                self.player.velocity = (self.player.velocity[0], 0)
-                print('in')
-
+                    self.player.velocity = (self.player.velocity[0], 0)
         else:
             self.player.on_block = False
 
 
+    def beri(self):
+        with open('bloki.txt', 'r') as f:
+            for item in f:
+                self.bloki.append([i.strip() for i in item.split()])
+
+        return(self.bloki)
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):
@@ -138,10 +147,6 @@ class BackgroundLayer(cocos.layer.Layer):
         self.image.position = 400, 250
         self.add(self.image, z=0)
 
-        self.player = cocos.sprite.Sprite(resources.mario)
-        self.player.position = 200, 250
-        self.add(self.player, z=1)
-
 class YouLostMenu(cocos.menu.Menu):
     def __init__(self):
         super(YouLostMenu, self).__init__("YOU LOST")
@@ -169,7 +174,7 @@ class YouLostMenu(cocos.menu.Menu):
     def on_new_game(self):
         scene = cocos.scene.Scene()
         scene.add(cocos.layer.MultiplexLayer(Game(), OptionsMenu()), z=1)
-        scene.add(BackgroundLayer(), z=0)
+        #scene.add(BackgroundLayer(), z=0)
         cocos.director.director.run(scene)
 
     def on_main_menu(self):
