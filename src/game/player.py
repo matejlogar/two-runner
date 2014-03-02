@@ -14,18 +14,19 @@ from game.resources import resources
 class Player(Sprite):
     def __init__(
             self,
-            position=(25, 25),
-            velocity=(0, 0),
-            speed=500,
-            gravity= -1300,
+            position = (25, 25),
+            velocity = (0, 0),
+            speed = 400,
+            gravity = -1300,
             *args,
             **kwargs):
 
         # Push the needed attributes into kwargs
         kwargs['position'] = position
 
-        super(Player, self).__init__(resources.mario, *args, **kwargs)
-
+        super(Player, self).__init__(resources.mario_desno, *args, **kwargs)
+        self.a = 0
+        self.b = 0
         self.speed = speed
         self.gravity = gravity
         self.velocity = velocity
@@ -66,20 +67,29 @@ class Player(Sprite):
 
             self.jumping = True
 
+        if self.velocity[0] == 0:
+            self.image = resources.mario_desno
 
+    def animate(self, resource):
+        if self.jumping == False:
+            if self.a > 5:
+                self.a = 0
+            if self.b%7 == 0:
+                self.image = resource[self.a]
+                self.a +=1
+            self.b +=1
 
     def handle_keys(self):
-        #keyboard = key.KeyStateHandler()
-        #director.window.push_handlers(keyboard)
         vel = [0, self.velocity[1]]
-
         if utils.keys[key.LEFT]:
             vel[0] -= self.speed//2
+            self.animate(resources.mario_levo1)
         if utils.keys[key.RIGHT]:
             vel[0] += self.speed//2
+            self.animate(resources.mario_desno1)
         if utils.keys[key.UP]:
             if not self.jumping:
-                vel[1] += self.speed
+                vel[1] += (self.speed + 100)
                 self.jumping = True
                 self.on_block = False
 

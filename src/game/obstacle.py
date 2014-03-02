@@ -12,7 +12,7 @@ class Obstacle(Sprite):
     def __init__(
             self,
             position = (770, 30),
-            velocity = (-100, 0),
+            velocity = (0, 0),
             speed = 50,
             *args,
             **kwargs):

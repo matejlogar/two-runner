@@ -11,6 +11,7 @@ from game import obstacle
 from game import player
 from game import utils
 from game import blocks
+from game.levels import Level
 
 from game.resources import resources
 
@@ -34,9 +35,9 @@ class Game(cocos.layer.ColorLayer):
 
         self.oblacki = ozadje.Oblacki()
         self.add(self.oblacki, z = 1)
-
+        self.level = Level(self)
         self.bloki = []
-        self.bloki = self.beri()
+        self.bloki = self.level.beri()
         self.block = []
         for i in range(len(self.bloki)):
             self.block.append(blocks.Blocks(
@@ -64,7 +65,7 @@ class Game(cocos.layer.ColorLayer):
                 scene.add(BackgroundLayer(), z=0)
                 cocos.director.director.run(scene)
             for i in self.block:
-                if i in collisions and self.player.position[1] >  i.position[1] + i.height and self.player.velocity[1] < 0:
+                if i in collisions and self.player.position[1] >  i.position[1] + i.height-2 and self.player.velocity[1] < 0:
                     self.player.position = (self.player.position[0],
                     i.position[1] + self.player.height/2 +
                     i.height/2)
@@ -74,13 +75,6 @@ class Game(cocos.layer.ColorLayer):
         else:
             self.player.on_block = False
 
-
-    def beri(self):
-        with open('bloki.txt', 'r') as f:
-            for item in f:
-                self.bloki.append([i.strip() for i in item.split()])
-
-        return(self.bloki)
 
 class MainMenu(cocos.menu.Menu):
     def __init__(self):
