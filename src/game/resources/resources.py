@@ -18,4 +18,4 @@ textures = pyglet.image.TextureGrid(grid)
 mario_desno1 = textures[12:19]
 mario_desno = pyglet.image.Animation.from_image_sequence(mario_desno1, 0.1, loop = True)
 mario_levo1 = textures[6:12]
-mario_levo = pyglet.image.Animation.from_image_sequence(mario_levo1, 0.1)
+mario_levo = pyglet.image.Animation.from_image_sequence(mario_levo1, 0.1, loop = True)

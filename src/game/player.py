@@ -8,6 +8,8 @@ from cocos.director import director
 from cocos.sprite import Sprite
 from pyglet.window import key
 
+import pyglet
+
 from game import utils
 from game.resources import resources
 
@@ -67,31 +69,27 @@ class Player(Sprite):
 
             self.jumping = True
 
-        if self.velocity[0] == 0:
-            self.image = resources.mario_desno
-
-    def animate(self, resource):
-        if self.jumping == False:
-            if self.a > 5:
-                self.a = 0
-            if self.b%7 == 0:
-                self.image = resource[self.a]
-                self.a +=1
-            self.b +=1
+        #if self.velocity[0] == 0:
+            #self.image = resources.mario_desno1
 
     def handle_keys(self):
         vel = [0, self.velocity[1]]
-        if utils.keys[key.LEFT]:
-            vel[0] -= self.speed//2
-            self.animate(resources.mario_levo1)
-        if utils.keys[key.RIGHT]:
-            vel[0] += self.speed//2
-            self.animate(resources.mario_desno1)
+        # if utils.keys[key.LEFT]:
+        #     vel[0] -= self.speed//2
+        #     self.animate(resources.mario_levo1)
+        # if utils.keys[key.RIGHT]:
+        #     vel[0] += self.speed//2
+        #     self.animate(resources.mario_desno1)
         if utils.keys[key.UP]:
             if not self.jumping:
                 vel[1] += (self.speed + 100)
                 self.jumping = True
                 self.on_block = False
+        if utils.keys[key.DOWN]:
+            if self.jumping:
+                pass
+            else:
+                self.position = (self.position[0], self.position[1]-25)
 
 
         self.velocity = tuple(vel)
